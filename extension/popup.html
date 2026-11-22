@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<!--
+SPDX-FileCopyrightText: 2026 Optimey CommV
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>VIES België</title>
+<style>
+  body { margin: 0; width: 340px; font-family: "Segoe UI", system-ui, sans-serif; background: #fff; color: #222; }
+  .wrap { display: flex; align-items: center; gap: 14px; padding: 16px 16px 10px; }
+  .dot { width: 46px; height: 46px; border-radius: 50%; flex: none;
+         box-shadow: inset 0 0 0 2px rgba(0,0,0,.25); background: #9a9a9a; position: relative; }
+  .dot.offline { animation: blink 1s steps(1, end) infinite; }
+  .dot::after { content: ""; position: absolute; left: 9px; top: 7px; width: 15px; height: 11px;
+                border-radius: 50%; background: rgba(255,255,255,.45); }
+  @keyframes blink { 50% { filter: brightness(.35); } }
+  .online  { background: #1ebe3c; }
+  .offline { background: #e12323; }
+  .fout    { background: #f0a014; }
+  h1 { margin: 0; font-size: 18px; }
+  h1.online { color: #148c2d; background: none; }
+  h1.offline { color: #b91919; background: none; }
+  h1.fout { color: #b46e00; background: none; }
+  .sub { color: #666; font-size: 12px; margin-top: 4px; line-height: 1.35; }
+  .bar { padding: 0 16px 12px; display: flex; justify-content: flex-end; }
+  button { font: inherit; font-size: 12px; padding: 5px 12px; border-radius: 6px;
+           border: 1px solid #ccc; background: #f6f6f6; cursor: pointer; }
+  button:disabled { opacity: .6; cursor: default; }
+
+  .check { border-top: 1px solid #e5e5e5; padding: 12px 16px 14px; }
+  .check h2 { margin: 0 0 8px; font-size: 13px; color: #444; }
+  .rij { display: flex; gap: 6px; }
+  #btw { flex: 1; font: inherit; font-size: 13px; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; }
+  #btw:focus { outline: 2px solid #8ab4f8; border-color: #8ab4f8; }
+  .hint { font-size: 11px; color: #888; margin-top: 4px; }
+  .res { margin-top: 10px; border-radius: 8px; padding: 9px 11px; font-size: 12px; line-height: 1.4; display: none; }
+  .res.toon { display: block; }
+  .res.geldig { background: #e8f6ec; border: 1px solid #9fd8ae; }
+  .res.ongeldig { background: #fdecec; border: 1px solid #f0a5a5; }
+  .res.storing { background: #fff4e0; border: 1px solid #f2c779; }
+  .res b { font-size: 13px; }
+  .res .nr { font-family: Consolas, monospace; }
+  .res .klein { color: #666; }
+  .hist { margin-top: 10px; }
+  .hist div { font-size: 11px; color: #555; padding: 3px 0; cursor: pointer; display: flex; justify-content: space-between; }
+  .hist div:hover { color: #000; }
+  .hist .v { color: #148c2d; } .hist .o { color: #b91919; } .hist .s { color: #b46e00; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div id="dot" class="dot"></div>
+    <div>
+      <h1 id="titel">Controleren...</h1>
+      <div id="sub" class="sub">Nog geen controle uitgevoerd</div>
+    </div>
+  </div>
+  <div class="bar"><button id="nu">Nu controleren</button></div>
+
+  <div class="check">
+    <h2>Btw-nummer controleren</h2>
+    <form id="form" class="rij">
+      <input id="btw" type="text" placeholder="bv. BE 0123.456.749" autocomplete="off" spellcheck="false">
+      <button id="go" type="submit">Controleer</button>
+    </form>
+    <div class="hint">Zonder landcode wordt BE gebruikt. Punten en spaties mogen.</div>
+    <div id="res" class="res"></div>
+    <div id="hist" class="hist"></div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

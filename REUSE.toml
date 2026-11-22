@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: 2026 Optimey CommV
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+version = 1
+SPDX-PackageName = "vies-status"
+SPDX-PackageSupplier = "Optimey CommV"
+SPDX-PackageDownloadLocation = "https://github.com/Optimey-CommV/vies-status"
+
+# Files that cannot carry a header of their own: the extension manifest (JSON),
+# the icons and the screenshot.
+[[annotations]]
+path = [
+    "extension/manifest.json",
+    "extension/icons/**",
+    "windows/app.ico",
+    "docs/**",
+]
+SPDX-FileCopyrightText = "2026 Optimey CommV"
+SPDX-License-Identifier = "GPL-3.0-or-later"
