@@ -7,13 +7,14 @@ SPDX-PackageSupplier = "Optimey CommV"
 SPDX-PackageDownloadLocation = "https://github.com/Optimey-CommV/vies-status"
 
 # Files that cannot carry a header of their own: the extension manifest (JSON),
-# the icons and the screenshot.
+# the icons, the screenshot and the ready-made builds in release/ (stored with Git LFS).
 [[annotations]]
 path = [
     "extension/manifest.json",
     "extension/icons/**",
     "windows/app.ico",
     "docs/**",
+    "release/**",
 ]
 SPDX-FileCopyrightText = "2026 Optimey CommV"
 SPDX-License-Identifier = "GPL-3.0-or-later"

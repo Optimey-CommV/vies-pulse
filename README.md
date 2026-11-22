@@ -39,6 +39,17 @@ The status is checked once a minute. In the extension only the dot in the popup 
 - Extension: Google Chrome or another Chromium based browser (Edge, Brave, Vivaldi).
 - Windows tool: Windows 10 or 11 (the .NET Framework 4.x it needs is part of Windows).
 
+## Download
+
+Ready-made builds are in [`release/`](release/):
+
+| File | What |
+|---|---|
+| `VIES-Belgie.exe` | The Windows tray tool. |
+| `VIES-Belgie-Chrome.zip` | The Chrome extension, to unpack and load as described below. |
+
+Both are stored with Git LFS on the Optimey LFS server, not on GitHub. Clone with [git-lfs](https://git-lfs.com) installed to get the real files; without it, or through the GitHub web interface, you only get small pointer files. You can always build both yourself from the sources, as described below.
+
 ## Installation
 
 ### Chrome extension
@@ -55,7 +66,7 @@ Chrome loads the extension from that folder, so keep it where it is. To update: 
 
 ### Windows tool
 
-Binaries are not kept in this repository. Build the tool with the C# compiler that comes with Windows:
+Use `release/VIES-Belgie.exe`, or build the tool yourself with the C# compiler that comes with Windows:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File windows\build.ps1
