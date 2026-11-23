@@ -4,8 +4,8 @@
 // Draws the extension icon: a magnifying glass whose blue lens carries the twelve
 // EU stars around a status-coloured centre with a euro sign.
 // Coordinates are on a 128 x 128 grid and scaled to the requested size.
-// `wave` (0..1, or null) is the phase of the pulse: a disc in the status colour behind
-// the magnifying glass that swells to the full icon size while it fades away.
+// `wave` (0..1, or null) is the phase of the pulse: a disc behind the magnifying glass
+// that inflates to the full icon size and deflates again, in the same colour as the centre.
 
 const ICON_BLUE = "#1f3f9e";
 const ICON_GOLD = "#ffcc00";
@@ -31,6 +31,22 @@ function iconStar(g, x, y, R) {
   g.fill();
 }
 
+// Mix a hex colour with black (amount < 0) or white (amount > 0).
+function shade(hex, amount) {
+  const n = parseInt(hex.slice(1), 16);
+  const target = amount < 0 ? 0 : 255;
+  const a = Math.abs(amount);
+  const c = [n >> 16, (n >> 8) & 255, n & 255].map(v => Math.round(v + (target - v) * a));
+  return `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
+}
+
+// Colour between deep (t = 0) and light (t = 1).
+function blend(hex, t) {
+  const deep = -0.3;
+  const light = 0.32;
+  return shade(hex, deep + (light - deep) * t);
+}
+
 function disc(g, L, r, fill) {
   g.fillStyle = fill;
   g.beginPath();
@@ -45,20 +61,26 @@ function drawIcon(g, size, colour, wave = null, shape = "logo") {
   g.clearRect(0, 0, size, size);
   g.scale(k, k);
 
-  // the swelling wave: centred on the whole icon, behind the magnifying glass,
-  // growing to the full icon size while it fades away
-  if (wave !== null) {
-    const p = Math.max(0, Math.min(1, wave));
-    const grow = 1 - Math.pow(1 - p, 3);
-    g.globalAlpha = 0.9 * Math.pow(1 - p, 0.6);
-    g.fillStyle = colour;
+  // The swelling: a disc centred on the whole icon that inflates to the full icon size
+  // and deflates again. Small it is deep red and sits behind the glass; while it swells
+  // it moves in front of everything step by step and turns a lighter red, and the
+  // handle fades away. The centre of the lens always has exactly the same colour.
+  let pulseColour = colour;
+  let q = 0;
+  const swelling = () => {
+    g.fillStyle = pulseColour;
     g.beginPath();
-    g.arc(64, 64, WAVE.from + (WAVE.to - WAVE.from) * grow, 0, Math.PI * 2);
+    g.arc(64, 64, WAVE.from + (WAVE.to - WAVE.from) * q, 0, Math.PI * 2);
     g.fill();
-    g.globalAlpha = 1;
+  };
+  if (wave !== null) {
+    q = 0.5 - 0.5 * Math.cos(2 * Math.PI * Math.max(0, Math.min(1, wave)));
+    pulseColour = blend(colour, q);
+    swelling();
   }
 
   // handle
+  g.globalAlpha = 1 - q;
   g.strokeStyle = ICON_BLUE;
   g.lineCap = "round";
   g.lineWidth = L.hw;
@@ -66,10 +88,11 @@ function drawIcon(g, size, colour, wave = null, shape = "logo") {
   g.moveTo(L.handle[0], L.handle[1]);
   g.lineTo(L.handle[2], L.handle[3]);
   g.stroke();
+  g.globalAlpha = 1;
 
   disc(g, L, L.r, ICON_BLUE);
 
-  disc(g, L, L.core, colour);
+  disc(g, L, L.core, pulseColour);
 
   // twelve stars (too small to read below 24 px)
   if (size >= 24) {
@@ -80,11 +103,19 @@ function drawIcon(g, size, colour, wave = null, shape = "logo") {
     }
   }
 
+  // in front of everything, more and more as it swells
+  if (wave !== null && q > 0) {
+    g.globalAlpha = q * q * (3 - 2 * q);
+    swelling();
+    g.globalAlpha = 1;
+  }
+
   g.fillStyle = "#fff";
   g.font = `bold ${L.font}px Arial, Helvetica, sans-serif`;
   g.textAlign = "center";
   g.textBaseline = "middle";
-  g.fillText("€", L.x, L.y + 2);
+  // the euro sign glides to the centre of the swelling
+  g.fillText("€", L.x + (64 - L.x) * q, L.y + 2 + (64 - L.y) * q);
   g.restore();
 }
 

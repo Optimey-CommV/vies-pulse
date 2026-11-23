@@ -58,14 +58,14 @@ async def text(page, el_id):
 
 
 async def pulses(page) -> bool:
-    """Sample a point beside the lens a few times; the swelling wave changes its colour."""
+    """Sample the centre of the lens a few times; while pulsing its colour keeps changing."""
     seen = set()
-    for _ in range(6):
+    for _ in range(8):
         px = await page.evaluate(
-            "() => Array.from(document.getElementById('icon').getContext('2d').getImageData(82, 22, 1, 1).data).join(',')"
+            "() => Array.from(document.getElementById('icon').getContext('2d').getImageData(40, 19, 1, 1).data).join(',')"
         )
         seen.add(px)
-        await asyncio.sleep(0.25)
+        await asyncio.sleep(0.13)
     return len(seen) > 1
 
 
