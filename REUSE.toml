@@ -2,9 +2,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 version = 1
-SPDX-PackageName = "vies-status"
+SPDX-PackageName = "vies-pulse"
 SPDX-PackageSupplier = "Optimey CommV"
-SPDX-PackageDownloadLocation = "https://github.com/Optimey-CommV/vies-status"
+SPDX-PackageDownloadLocation = "https://github.com/Optimey-CommV/vies-pulse"
 
 # Files that cannot carry a header of their own: the extension manifest and translations (JSON),
 # the icons, the screenshot and the ready-made builds in release/ (stored with Git LFS).

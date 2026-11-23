@@ -53,7 +53,7 @@ The Windows build is stored with Git LFS on the Optimey LFS server, not on GitHu
 ### Chrome extension
 
 ```sh
-git clone https://github.com/Optimey-CommV/vies-status.git
+git clone https://github.com/Optimey-CommV/vies-pulse.git
 ```
 
 1. Open `chrome://extensions` and switch on **Developer mode**.

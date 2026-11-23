@@ -25,4 +25,4 @@ This policy covers the Chrome extension "VIES Pulse" and the Windows tray tool i
 
 ## Contact
 
-Questions about this policy: joost@optimey.be or an issue at https://github.com/Optimey-CommV/vies-status/issues.
+Questions about this policy: joost@optimey.be or an issue at https://github.com/Optimey-CommV/vies-pulse/issues.
