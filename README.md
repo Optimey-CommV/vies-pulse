@@ -39,14 +39,12 @@ The status is checked once a minute. In the extension both the toolbar icon and 
 
 ## Download
 
-Ready-made builds are in [`release/`](release/):
-
-| File | What |
+| What | Where |
 |---|---|
-| `VIES-Belgie.exe` | The Windows tray tool. |
-| `VIES-Belgie-Chrome.zip` | The Chrome extension, to unpack and load as described below. |
+| Chrome extension | The Chrome Web Store (link follows once the listing is approved), or load the `extension` folder yourself as described below. |
+| Windows tray tool | [`release/VIES-Belgie.exe`](release/) |
 
-Both are stored with Git LFS on the Optimey LFS server, not on GitHub. Clone with [git-lfs](https://git-lfs.com) installed to get the real files; without it, or through the GitHub web interface, you only get small pointer files. You can always build both yourself from the sources, as described below.
+The Windows build is stored with Git LFS on the Optimey LFS server, not on GitHub. Clone with [git-lfs](https://git-lfs.com) installed to get the real file; without it, or through the GitHub web interface, you only get a small pointer file. You can always build it yourself from the sources, as described below.
 
 ## Installation
 
@@ -119,7 +117,7 @@ Both tools only talk to the public VIES REST API of the European Commission:
 - `GET https://ec.europa.eu/taxation_customs/vies/rest-api/check-status` for the availability per member state;
 - `GET https://ec.europa.eu/taxation_customs/vies/rest-api/ms/{country}/vat/{number}` for a single VAT number (extension only).
 
-No other servers are contacted and nothing is sent anywhere else. The extension keeps the last status and the last five checked numbers in `chrome.storage.local`, on your own machine, and its settings in `chrome.storage.sync`.
+No other servers are contacted and nothing is sent anywhere else. See the [privacy policy](PRIVACY.md). The extension keeps the last status and the last five checked numbers in `chrome.storage.local`, on your own machine, and its settings in `chrome.storage.sync`.
 
 Translations live in `extension/lang/<code>.json` (user interface) and `extension/_locales/<code>/messages.json` (name and description in the Chrome Web Store). All files must have the same keys as the English ones; the test checks this.
 
