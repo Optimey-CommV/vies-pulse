@@ -58,11 +58,11 @@ async def text(page, el_id):
 
 
 async def pulses(page) -> bool:
-    """Sample the centre of the status icon a few times; a pulse changes its colour."""
+    """Sample a point beside the lens a few times; the swelling wave changes its colour."""
     seen = set()
     for _ in range(6):
         px = await page.evaluate(
-            "() => Array.from(document.getElementById('icon').getContext('2d').getImageData(48, 30, 1, 1).data).join(',')"
+            "() => Array.from(document.getElementById('icon').getContext('2d').getImageData(82, 22, 1, 1).data).join(',')"
         )
         seen.add(px)
         await asyncio.sleep(0.25)
@@ -222,7 +222,7 @@ async def run(chrome: str | None, screenshot: str | None) -> None:
                 await page.wait_for_function("() => document.getElementById('land').textContent.includes('Niederlande')")
                 st = await b.sw.evaluate("chrome.storage.sync.get(null)")
                 assert st == {"country": "auto", "language": "auto", "pulse": True, "pulsePeriod": 1600}, st
-                assert await opt.evaluate("document.getElementById('pulsePeriod').value") == "1600"
+                await opt.wait_for_function("() => document.getElementById('pulsePeriod').value === '1600'")
                 print("ok  options page saves country, language and pulse settings, and resets them")
 
             # Outside the EU: no country until one is chosen.

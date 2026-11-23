@@ -34,9 +34,9 @@ function startPulse(period) {
   const steps = Math.max(2, Math.min(24, Math.round(period / 40)));
   const frames = [];
   for (let i = 0; i < steps; i++) {
-    const glow = pulseGlow((i * period) / steps, period);
+    const wave = i / steps;
     const imageData = {};
-    for (const size of [16, 24, 32]) imageData[size] = renderIcon(COLOURS.offline, size, glow);
+    for (const size of [16, 24, 32]) imageData[size] = renderIcon(COLOURS.offline, size, wave);
     frames.push(imageData);
   }
   let i = 0;

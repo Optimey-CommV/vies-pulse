@@ -4,8 +4,14 @@
   "version": "1.2.0",
   "description": "__MSG_ext_desc__",
   "default_locale": "en",
-  "permissions": ["alarms", "notifications", "storage"],
-  "host_permissions": ["https://ec.europa.eu/taxation_customs/vies/*"],
+  "permissions": [
+    "alarms",
+    "notifications",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://ec.europa.eu/taxation_customs/vies/*"
+  ],
   "background": {
     "service_worker": "background.js"
   },
@@ -17,10 +23,9 @@
     "default_title": "VIES",
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "icons/icon16.png",
-      "32": "icons/icon32.png",
-      "48": "icons/icon48.png",
-      "128": "icons/icon128.png"
+      "16": "icons/toolbar16.png",
+      "24": "icons/toolbar24.png",
+      "32": "icons/toolbar32.png"
     }
   },
   "icons": {

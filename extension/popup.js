@@ -52,7 +52,7 @@ function paintIcon(s) {
     return;
   }
   const frame = now => {
-    drawIcon(g, canvas.width, COLOURS.offline, pulseGlow(now, ctx.period));
+    drawIcon(g, canvas.width, COLOURS.offline, pulsePhase(now, ctx.period));
     pulseFrame = requestAnimationFrame(frame);
   };
   pulseFrame = requestAnimationFrame(frame);
