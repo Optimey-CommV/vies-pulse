@@ -7,5 +7,5 @@
 # and ask for an LFS repository of that name on the server.
 # Without git-lfs you get small pointer files instead of the real files.
 [lfs]
-	url = https://lfs-github.optimey.be/Optimey-CommV/vies-status.git/info/lfs
+	url = https://lfs-github.optimey.be/Optimey-CommV/vies-pulse.git/info/lfs
 	locksverify = false
