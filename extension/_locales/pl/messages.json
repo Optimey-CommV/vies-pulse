@@ -1,0 +1,8 @@
+{
+  "ext_name": {
+    "message": "Status VIES"
+  },
+  "ext_desc": {
+    "message": "Pokazuje, czy numery VAT można zweryfikować w VIES, i sprawdza numery VAT z całej UE."
+  }
+}

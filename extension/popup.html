@@ -3,74 +3,78 @@
 SPDX-FileCopyrightText: 2026 Optimey CommV
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
-<html lang="nl">
+<html>
 <head>
 <meta charset="utf-8">
-<title>VIES België</title>
+<title>VIES</title>
 <style>
   body { margin: 0; width: 340px; font-family: "Segoe UI", system-ui, sans-serif; background: #fff; color: #222; }
-  .wrap { display: flex; align-items: center; gap: 14px; padding: 16px 16px 10px; }
-  .dot { width: 46px; height: 46px; border-radius: 50%; flex: none;
-         box-shadow: inset 0 0 0 2px rgba(0,0,0,.25); background: #9a9a9a; position: relative; }
-  .dot.offline { animation: blink 1s steps(1, end) infinite; }
-  .dot::after { content: ""; position: absolute; left: 9px; top: 7px; width: 15px; height: 11px;
-                border-radius: 50%; background: rgba(255,255,255,.45); }
-  @keyframes blink { 50% { filter: brightness(.35); } }
-  .online  { background: #1ebe3c; }
-  .offline { background: #e12323; }
-  .fout    { background: #f0a014; }
+  .top { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px 0 16px; }
+  .land { font-size: 12px; color: #555; font-weight: 600; letter-spacing: .02em; }
+  .gear { border: none; background: none; padding: 4px; border-radius: 6px; cursor: pointer; color: #666; line-height: 0; }
+  .gear:hover { background: #f0f0f0; color: #222; }
+  .wrap { display: flex; align-items: center; gap: 14px; padding: 6px 16px 10px; }
+  #icon { width: 48px; height: 48px; flex: none; }
   h1 { margin: 0; font-size: 18px; }
-  h1.online { color: #148c2d; background: none; }
-  h1.offline { color: #b91919; background: none; }
-  h1.fout { color: #b46e00; background: none; }
+  h1.online { color: #148c2d; }
+  h1.offline { color: #b91919; }
+  h1.error { color: #a86200; }
+  h1.checking, h1.nocountry { color: #555; }
   .sub { color: #666; font-size: 12px; margin-top: 4px; line-height: 1.35; }
   .bar { padding: 0 16px 12px; display: flex; justify-content: flex-end; }
-  button { font: inherit; font-size: 12px; padding: 5px 12px; border-radius: 6px;
-           border: 1px solid #ccc; background: #f6f6f6; cursor: pointer; }
-  button:disabled { opacity: .6; cursor: default; }
-
+  button.knop { font: inherit; font-size: 12px; padding: 5px 12px; border-radius: 6px;
+                border: 1px solid #ccc; background: #f6f6f6; cursor: pointer; }
+  button.knop:disabled { opacity: .6; cursor: default; }
   .check { border-top: 1px solid #e5e5e5; padding: 12px 16px 14px; }
   .check h2 { margin: 0 0 8px; font-size: 13px; color: #444; }
   .rij { display: flex; gap: 6px; }
-  #btw { flex: 1; font: inherit; font-size: 13px; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; }
-  #btw:focus { outline: 2px solid #8ab4f8; border-color: #8ab4f8; }
+  #vat { flex: 1; min-width: 0; font: inherit; font-size: 13px; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; }
+  #vat:focus { outline: 2px solid #8ab4f8; border-color: #8ab4f8; }
   .hint { font-size: 11px; color: #888; margin-top: 4px; }
   .res { margin-top: 10px; border-radius: 8px; padding: 9px 11px; font-size: 12px; line-height: 1.4; display: none; }
-  .res.toon { display: block; }
-  .res.geldig { background: #e8f6ec; border: 1px solid #9fd8ae; }
-  .res.ongeldig { background: #fdecec; border: 1px solid #f0a5a5; }
-  .res.storing { background: #fff4e0; border: 1px solid #f2c779; }
+  .res.show { display: block; }
+  .res.valid { background: #e8f6ec; border: 1px solid #9fd8ae; }
+  .res.invalid { background: #fdecec; border: 1px solid #f0a5a5; }
+  .res.failed { background: #fff4e0; border: 1px solid #f2c779; }
   .res b { font-size: 13px; }
   .res .nr { font-family: Consolas, monospace; }
-  .res .klein { color: #666; }
+  .res .small { color: #666; }
   .hist { margin-top: 10px; }
   .hist div { font-size: 11px; color: #555; padding: 3px 0; cursor: pointer; display: flex; justify-content: space-between; }
   .hist div:hover { color: #000; }
-  .hist .v { color: #148c2d; } .hist .o { color: #b91919; } .hist .s { color: #b46e00; }
+  .hist .v { color: #148c2d; } .hist .o { color: #b91919; } .hist .s { color: #a86200; }
 </style>
 </head>
 <body>
+  <div class="top">
+    <span id="land" class="land">VIES</span>
+    <button id="gear" class="gear" type="button">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </div>
   <div class="wrap">
-    <div id="dot" class="dot"></div>
+    <canvas id="icon" width="96" height="96"></canvas>
     <div>
-      <h1 id="titel">Controleren...</h1>
-      <div id="sub" class="sub">Nog geen controle uitgevoerd</div>
+      <h1 id="title"></h1>
+      <div id="sub" class="sub"></div>
     </div>
   </div>
-  <div class="bar"><button id="nu">Nu controleren</button></div>
+  <div class="bar"><button id="now" class="knop" type="button"></button></div>
 
   <div class="check">
-    <h2>Btw-nummer controleren</h2>
+    <h2 id="vatHeading"></h2>
     <form id="form" class="rij">
-      <input id="btw" type="text" placeholder="bv. BE 0123.456.749" autocomplete="off" spellcheck="false">
-      <button id="go" type="submit">Controleer</button>
+      <input id="vat" type="text" autocomplete="off" spellcheck="false">
+      <button id="go" class="knop" type="submit"></button>
     </form>
-    <div class="hint">Zonder landcode wordt BE gebruikt. Punten en spaties mogen.</div>
+    <div id="hint" class="hint"></div>
     <div id="res" class="res"></div>
     <div id="hist" class="hist"></div>
   </div>
 
   <script src="config.js"></script>
+  <script src="i18n.js"></script>
+  <script src="icon.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

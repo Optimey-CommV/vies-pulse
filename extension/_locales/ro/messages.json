@@ -1,0 +1,8 @@
+{
+  "ext_name": {
+    "message": "Stare VIES"
+  },
+  "ext_desc": {
+    "message": "Arată dacă codurile de TVA pot fi validate prin VIES și verifică coduri de TVA din întreaga UE."
+  }
+}

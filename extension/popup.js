@@ -1,213 +1,226 @@
 // SPDX-FileCopyrightText: 2026 Optimey CommV
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-const TEKST = {
-  online:   ["Online", "Btw-nummers valideren werkt."],
-  offline:  ["Niet beschikbaar", "Belgisch luik van VIES ligt plat."],
-  fout:     ["Kan niet controleren", "Statuspagina niet bereikbaar."],
-  onbekend: ["Controleren...", "Nog geen controle uitgevoerd"]
-};
+const $ = id => document.getElementById(id);
+const STATES = ["online", "offline", "error", "checking", "nocountry"];
+const COLOURS = { online: "#1fa83a", offline: "#d92b2b", error: "#ef9a10", checking: "#8a8f98", nocountry: "#8a8f98" };
+const VIES_ERRORS = ["MS_UNAVAILABLE", "MS_MAX_CONCURRENT_REQ", "GLOBAL_MAX_CONCURRENT_REQ",
+  "SERVICE_UNAVAILABLE", "TIMEOUT", "VAT_BLOCKED", "IP_BLOCKED"];
 
-// Landcodes die VIES kent (EL = Griekenland, XI = Noord-Ierland).
-const LANDEN = {
-  AT: "Oostenrijk", BE: "België", BG: "Bulgarije", CY: "Cyprus", CZ: "Tsjechië", DE: "Duitsland",
-  DK: "Denemarken", EE: "Estland", EL: "Griekenland", ES: "Spanje", FI: "Finland", FR: "Frankrijk",
-  HR: "Kroatië", HU: "Hongarije", IE: "Ierland", IT: "Italië", LT: "Litouwen", LU: "Luxemburg",
-  LV: "Letland", MT: "Malta", NL: "Nederland", PL: "Polen", PT: "Portugal", RO: "Roemenië",
-  SE: "Zweden", SI: "Slovenië", SK: "Slowakije", XI: "Noord-Ierland"
-};
+let ctx = null; // { country, language, messages, t }
 
-const FOUTEN = {
-  MS_UNAVAILABLE: "De databank van dit land is momenteel niet beschikbaar. Probeer later opnieuw.",
-  MS_MAX_CONCURRENT_REQ: "Te veel gelijktijdige aanvragen bij dit land. Probeer zo dadelijk opnieuw.",
-  GLOBAL_MAX_CONCURRENT_REQ: "VIES is overbelast. Probeer zo dadelijk opnieuw.",
-  SERVICE_UNAVAILABLE: "VIES is momenteel niet beschikbaar.",
-  TIMEOUT: "De databank van dit land antwoordde niet op tijd.",
-  INVALID_INPUT: "Dit is geen geldig formaat voor een btw-nummer.",
-  VAT_BLOCKED: "Dit btw-nummer kan niet gecontroleerd worden.",
-  IP_BLOCKED: "Je IP-adres is tijdelijk geblokkeerd door VIES."
-};
-
-const p2 = n => String(n).padStart(2, "0");
-function tijd(ms) {
-  const d = new Date(ms);
-  return `${p2(d.getDate())}/${p2(d.getMonth() + 1)}/${d.getFullYear()} ${p2(d.getHours())}:${p2(d.getMinutes())}:${p2(d.getSeconds())}`;
-}
-
-function zetTekst(el, tekst) {
+function setLines(el, text) {
   el.textContent = "";
-  String(tekst).split("\n").forEach((regel, i) => {
+  String(text).split("\n").forEach((line, i) => {
     if (i) el.appendChild(document.createElement("br"));
-    el.appendChild(document.createTextNode(regel));
+    el.appendChild(document.createTextNode(line));
   });
 }
 
-/* ---------- status VIES België ---------- */
+const when = ms => formatTime(ms, ctx.language, ctx.country);
+const nameOf = code => countryName(code, ctx.language, ctx.messages);
 
-function toonStatus({ status, gecontroleerd }) {
-  const s = TEKST[status] ? status : "onbekend";
-  document.getElementById("dot").className = "dot " + s;
-  const titel = document.getElementById("titel");
-  titel.className = s;
-  titel.textContent = TEKST[s][0];
-  let sub = TEKST[s][1];
-  if (gecontroleerd) sub += "\nLaatste controle: " + tijd(gecontroleerd);
-  zetTekst(document.getElementById("sub"), sub);
+/* ---------- labels ---------- */
+
+function applyLabels() {
+  const { t, country } = ctx;
+  document.documentElement.lang = ctx.language;
+  $("land").textContent = country ? `VIES · ${nameOf(country)}` : "VIES";
+  $("gear").title = t("settings");
+  $("gear").setAttribute("aria-label", t("settings"));
+  $("now").textContent = t("check_now");
+  $("vatHeading").textContent = t("vat_heading");
+  $("go").textContent = t("vat_submit");
+  const cc = country || "BE";
+  $("vat").placeholder = t("vat_example", { example: `${cc} ${COUNTRIES[cc]}` });
+  $("hint").textContent = t("vat_hint", { cc });
 }
 
-chrome.storage.local.get(["status", "gecontroleerd"]).then(toonStatus);
-chrome.storage.onChanged.addListener((changes) => {
-  if (changes.status || changes.gecontroleerd) chrome.storage.local.get(["status", "gecontroleerd"]).then(toonStatus);
-});
+/* ---------- status ---------- */
 
-document.getElementById("nu").addEventListener("click", async () => {
-  const b = document.getElementById("nu");
-  b.disabled = true;
-  b.textContent = "Bezig...";
-  try { await chrome.runtime.sendMessage({ type: "controleer" }); }
-  finally { b.disabled = false; b.textContent = "Nu controleren"; }
-});
+let pulseFrame = null;
 
-/* ---------- btw-nummer controleren ---------- */
+// Draws the status icon; while unavailable the centre pulses slowly.
+function paintIcon(s) {
+  const canvas = $("icon");
+  const g = canvas.getContext("2d");
+  cancelAnimationFrame(pulseFrame);
+  const pulsing = s === "offline" && ctx.pulse;
+  canvas.dataset.pulse = pulsing ? "on" : "off";
+  if (!pulsing) {
+    drawIcon(g, canvas.width, COLOURS[s]);
+    return;
+  }
+  const frame = now => {
+    drawIcon(g, canvas.width, COLOURS.offline, pulseGlow(now, ctx.period));
+    pulseFrame = requestAnimationFrame(frame);
+  };
+  pulseFrame = requestAnimationFrame(frame);
+}
 
-function ontleed(invoer) {
-  let s = String(invoer || "").toUpperCase().replace(/[\s.\-_/]/g, "");
+function showStatus({ status, checkedAt }) {
+  const { t } = ctx;
+  const s = STATES.includes(status) ? status : "checking";
+  paintIcon(s);
+  $("title").className = s;
+  $("title").textContent = t(`status_${s}_title`);
+  let sub = t(`status_${s}_text`);
+  if (checkedAt && s !== "checking" && s !== "nocountry") sub += "\n" + t("last_check", { time: when(checkedAt) });
+  setLines($("sub"), sub);
+}
+
+const refreshStatus = () => chrome.storage.local.get(["status", "checkedAt"]).then(showStatus);
+
+/* ---------- VAT number ---------- */
+
+function parse(input) {
+  let s = String(input || "").toUpperCase().replace(/[\s.\-_/]/g, "");
   if (!s) return null;
-  let land = "BE";
+  let cc = ctx.country || "BE";
   if (/^[A-Z]{2}/.test(s)) {
-    land = s.slice(0, 2);
+    cc = s.slice(0, 2);
     s = s.slice(2);
   }
-  if (land === "GR") land = "EL";
-  if (!LANDEN[land]) return { fout: `Onbekende landcode "${land}".` };
-  if (!/^[0-9A-Z+*]{2,14}$/.test(s)) return { fout: "Dit lijkt geen geldig btw-nummer." };
-  return { land, nummer: s };
+  if (cc === "GR") cc = "EL";
+  if (!COUNTRIES[cc]) return { error: ctx.t("err_unknown_cc", { cc }) };
+  if (!/^[0-9A-Z+*]{2,14}$/.test(s)) return { error: ctx.t("err_format") };
+  return { cc, number: s };
 }
 
-function leeg(v) { return !v || v.trim() === "" || v.trim() === "---"; }
+const empty = v => !v || v.trim() === "" || v.trim() === "---";
 
-async function vraagVies(land, nummer) {
-  const url = `${VIES_BASE}/ms/${land}/vat/${encodeURIComponent(nummer)}`;
+async function askVies(cc, number) {
+  const url = `${VIES_BASE}/ms/${cc}/vat/${encodeURIComponent(number)}`;
   const r = await fetch(url, { cache: "no-store", headers: { Accept: "application/json" } });
   if (!r.ok) throw new Error("HTTP " + r.status);
   return r.json();
 }
 
-function toonResultaat(land, nummer, data, fout) {
-  const res = document.getElementById("res");
+function line(parent, text, cls) {
+  const d = document.createElement("div");
+  if (cls) d.className = cls;
+  setLines(d, text);
+  parent.appendChild(d);
+}
+
+function showResult(cc, number, data, failure) {
+  const { t } = ctx;
+  const res = $("res");
   res.textContent = "";
-  res.className = "res toon";
-  const kop = document.createElement("b");
-  const nr = document.createElement("div");
-  nr.className = "nr";
-  nr.textContent = `${land} ${nummer} (${LANDEN[land]})`;
+  res.className = "res show";
+  const head = document.createElement("b");
+  res.appendChild(head);
+  line(res, `${cc} ${number} (${nameOf(cc)})`, "nr");
 
-  let soort;
-  if (fout) {
-    soort = "storing";
-    kop.textContent = "Controle mislukt";
-    res.append(kop, nr);
-    const p = document.createElement("div");
-    p.textContent = fout;
-    res.appendChild(p);
+  let kind;
+  if (failure) {
+    kind = "failed";
+    head.textContent = t("res_failed");
+    line(res, failure);
+  } else if (data.userError === "INVALID_INPUT") {
+    kind = "invalid";
+    head.textContent = t("err_format");
   } else if (data.userError && data.userError !== "VALID" && data.userError !== "INVALID") {
-    soort = "storing";
-    kop.textContent = "Niet te controleren";
-    res.append(kop, nr);
-    const p = document.createElement("div");
-    p.textContent = FOUTEN[data.userError] || `VIES antwoordde: ${data.userError}`;
-    res.appendChild(p);
+    kind = "failed";
+    head.textContent = t("res_unavailable");
+    line(res, VIES_ERRORS.includes(data.userError) ? t("e_" + data.userError) : t("vies_answer", { code: data.userError }));
   } else if (data.isValid) {
-    soort = "geldig";
-    kop.textContent = "Geldig btw-nummer";
-    res.append(kop, nr);
-    if (!leeg(data.name)) {
-      const n = document.createElement("div");
-      n.textContent = data.name.trim();
-      res.appendChild(n);
-    }
-    if (!leeg(data.address)) {
-      const a = document.createElement("div");
-      zetTekst(a, data.address.trim());
-      res.appendChild(a);
-    }
-    if (leeg(data.name) && leeg(data.address)) {
-      const k = document.createElement("div");
-      k.className = "klein";
-      k.textContent = "Dit land geeft geen naam of adres vrij via VIES.";
-      res.appendChild(k);
-    }
+    kind = "valid";
+    head.textContent = t("res_valid");
+    if (!empty(data.name)) line(res, data.name.trim());
+    if (!empty(data.address)) line(res, data.address.trim());
+    if (empty(data.name) && empty(data.address)) line(res, t("res_no_details"), "small");
   } else {
-    soort = "ongeldig";
-    kop.textContent = "Ongeldig of niet geregistreerd voor intracommunautaire handel";
-    res.append(kop, nr);
+    kind = "invalid";
+    head.textContent = t("res_invalid");
   }
-  res.classList.add(soort);
-
-  const k = document.createElement("div");
-  k.className = "klein";
+  res.classList.add(kind);
   const moment = data && data.requestDate ? Date.parse(data.requestDate) : Date.now();
-  k.textContent = "Gecontroleerd op " + tijd(moment);
-  res.appendChild(k);
-  return soort;
+  line(res, t("res_checked_at", { time: when(moment) }), "small");
+  return kind;
 }
 
-async function bewaarHistoriek(land, nummer, soort) {
-  const { historiek = [] } = await chrome.storage.local.get("historiek");
-  const sleutel = land + nummer;
-  const nieuw = [{ land, nummer, soort, ms: Date.now() }, ...historiek.filter(h => h.land + h.nummer !== sleutel)].slice(0, 5);
-  await chrome.storage.local.set({ historiek: nieuw });
-  toonHistoriek(nieuw);
+async function saveHistory(cc, number, kind) {
+  const { history = [] } = await chrome.storage.local.get("history");
+  const key = cc + number;
+  const list = [{ cc, number, kind, ms: Date.now() }, ...history.filter(h => h.cc + h.number !== key)].slice(0, 5);
+  await chrome.storage.local.set({ history: list });
+  showHistory(list);
 }
 
-function toonHistoriek(lijst) {
-  const el = document.getElementById("hist");
+function showHistory(list) {
+  const { t } = ctx;
+  const el = $("hist");
   el.textContent = "";
-  const labels = { geldig: ["geldig", "v"], ongeldig: ["ongeldig", "o"], storing: ["niet gecontroleerd", "s"] };
-  (lijst || []).forEach(h => {
-    const rij = document.createElement("div");
-    const links = document.createElement("span");
-    links.textContent = `${h.land} ${h.nummer}`;
-    const rechts = document.createElement("span");
-    const [txt, cls] = labels[h.soort] || ["?", "s"];
-    rechts.className = cls;
-    rechts.textContent = txt;
-    rij.append(links, rechts);
-    rij.title = "Opnieuw controleren";
-    rij.addEventListener("click", () => {
-      document.getElementById("btw").value = h.land + h.nummer;
-      controleerBtw();
+  const labels = { valid: ["hist_valid", "v"], invalid: ["hist_invalid", "o"], failed: ["hist_unchecked", "s"] };
+  (list || []).forEach(h => {
+    const row = document.createElement("div");
+    const left = document.createElement("span");
+    left.textContent = `${h.cc} ${h.number}`;
+    const right = document.createElement("span");
+    const [key, cls] = labels[h.kind] || labels.failed;
+    right.className = cls;
+    right.textContent = t(key);
+    row.append(left, right);
+    row.title = t("hist_recheck");
+    row.addEventListener("click", () => {
+      $("vat").value = h.cc + h.number;
+      checkVat();
     });
-    el.appendChild(rij);
+    el.appendChild(row);
   });
 }
 
-async function controleerBtw() {
-  const veld = document.getElementById("btw");
-  const knop = document.getElementById("go");
-  const o = ontleed(veld.value);
-  const res = document.getElementById("res");
-  if (!o) return;
-  if (o.fout) {
-    res.className = "res toon ongeldig";
-    res.textContent = o.fout;
+async function checkVat() {
+  const { t } = ctx;
+  const p = parse($("vat").value);
+  const res = $("res");
+  if (!p) return;
+  if (p.error) {
+    res.className = "res show invalid";
+    res.textContent = p.error;
     return;
   }
-  knop.disabled = true;
-  knop.textContent = "Bezig...";
-  let soort;
+  const button = $("go");
+  button.disabled = true;
+  button.textContent = t("busy");
+  let kind;
   try {
-    const data = await vraagVies(o.land, o.nummer);
-    soort = toonResultaat(o.land, o.nummer, data, null);
+    kind = showResult(p.cc, p.number, await askVies(p.cc, p.number), null);
   } catch (e) {
-    soort = toonResultaat(o.land, o.nummer, null, "VIES niet bereikbaar (" + (e.message || e) + ").");
+    kind = showResult(p.cc, p.number, null, t("err_unreachable", { detail: e.message || e }));
   } finally {
-    knop.disabled = false;
-    knop.textContent = "Controleer";
+    button.disabled = false;
+    button.textContent = t("vat_submit");
   }
-  await bewaarHistoriek(o.land, o.nummer, soort);
+  await saveHistory(p.cc, p.number, kind);
 }
 
-document.getElementById("form").addEventListener("submit", e => { e.preventDefault(); controleerBtw(); });
-chrome.storage.local.get("historiek").then(({ historiek }) => toonHistoriek(historiek));
-document.getElementById("btw").focus();
+/* ---------- start ---------- */
+
+async function init() {
+  const { country, language, pulse, period } = await loadSettings();
+  const messages = await loadMessages(language);
+  ctx = { country, language, pulse, period, messages, t: makeT(messages) };
+  applyLabels();
+  await refreshStatus();
+  const { history } = await chrome.storage.local.get("history");
+  showHistory(history);
+}
+
+$("now").addEventListener("click", async () => {
+  const b = $("now");
+  b.disabled = true;
+  b.textContent = ctx.t("busy");
+  try { await chrome.runtime.sendMessage({ type: "check" }); }
+  finally { b.disabled = false; b.textContent = ctx.t("check_now"); }
+});
+$("gear").addEventListener("click", () => chrome.runtime.openOptionsPage());
+$("form").addEventListener("submit", e => { e.preventDefault(); checkVat(); });
+
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === "sync") init();
+  else if (ctx && (changes.status || changes.checkedAt)) refreshStatus();
+});
+
+init().then(() => $("vat").focus());

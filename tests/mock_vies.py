@@ -6,7 +6,7 @@ It serves the two endpoints the extension calls:
   GET /check-status          availability per member state
   GET /ms/<cc>/vat/<number>  check of a single VAT number
 
-The availability of BE can be switched at runtime with GET /set-be/<Available|Unavailable>.
+The availability of a country can be switched at runtime with GET /set/<CC>/<Available|Unavailable>.
 All names and addresses are fictitious.
 """
 
@@ -16,7 +16,10 @@ import sys
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-STATE = {"BE": "Unavailable"}
+CODES = ["AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "EL", "ES", "FI", "FR", "HR", "HU",
+         "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK", "XI"]
+STATE = {code: "Available" for code in CODES}
+STATE["BE"] = "Unavailable"
 
 VAT = {
     ("BE", "0123456749"): ("VALID", True, "EXAMPLE NV", "Voorbeeldstraat 1\n1000 Brussel"),
@@ -28,17 +31,14 @@ VAT = {
 
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
-        m = re.match(r"^/set-be/(\w+)$", self.path)
+        m = re.match(r"^/set/(\w+)/(\w+)$", self.path)
         if m:
-            STATE["BE"] = m.group(1)
+            STATE[m.group(1)] = m.group(2)
             body = {"ok": True}
         elif self.path.startswith("/check-status"):
             body = {
                 "vow": {"available": True},
-                "countries": [
-                    {"countryCode": "AT", "availability": "Available"},
-                    {"countryCode": "BE", "availability": STATE["BE"]},
-                ],
+                "countries": [{"countryCode": c, "availability": STATE[c]} for c in CODES],
             }
         else:
             m = re.match(r"^/ms/(\w+)/vat/(\w+)$", self.path)

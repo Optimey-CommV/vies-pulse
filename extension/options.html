@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<!--
+SPDX-FileCopyrightText: 2026 Optimey CommV
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<title>VIES</title>
+<style>
+  body { margin: 0; padding: 16px 20px 20px; font-family: "Segoe UI", system-ui, sans-serif; color: #222; min-width: 380px; }
+  h1 { font-size: 16px; margin: 0 0 14px; }
+  label { display: block; font-size: 13px; font-weight: 600; margin: 14px 0 6px; }
+  select { font: inherit; font-size: 13px; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; width: 100%; max-width: 360px; }
+  .help { font-size: 12px; color: #666; margin-top: 5px; line-height: 1.4; max-width: 420px; }
+  .check { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 400; margin: 6px 0 0; }
+  .check input { margin: 0; }
+  select:disabled { opacity: .5; }
+  .slider { display: flex; align-items: center; gap: 12px; max-width: 420px; }
+  .slider input { flex: 1; }
+  .slider input:disabled, .slider input:disabled + output { opacity: .5; }
+  #periodValue { font-size: 13px; min-width: 64px; text-align: right; font-variant-numeric: tabular-nums; }
+  .foot { display: flex; align-items: center; gap: 12px; margin-top: 20px; padding-top: 14px; border-top: 1px solid #e5e5e5; }
+  #reset { font: inherit; font-size: 12px; padding: 5px 12px; border-radius: 6px; border: 1px solid #ccc; background: #f6f6f6; cursor: pointer; }
+  #reset:hover { background: #ececec; }
+  #saved { font-size: 12px; color: #148c2d; }
+  .about { margin-top: 16px; font-size: 12px; color: #666; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .about a { color: #1f3f9e; text-decoration: none; }
+  .about a:hover { text-decoration: underline; }
+  .about .sep { color: #bbb; }
+</style>
+</head>
+<body>
+  <h1 id="title"></h1>
+  <label for="country" id="countryLabel"></label>
+  <select id="country"></select>
+  <div class="help" id="countryHelp"></div>
+  <label for="language" id="languageLabel"></label>
+  <select id="language"></select>
+  <div class="help" id="languageHelp"></div>
+  <label id="pulseLabel"></label>
+  <label class="check"><input type="checkbox" id="pulse"><span id="pulseEnable"></span></label>
+  <div class="help" id="pulseHelp"></div>
+  <label for="pulsePeriod" id="speedLabel"></label>
+  <div class="slider"><input type="range" id="pulsePeriod" min="10" max="2000" step="10"><output id="periodValue" for="pulsePeriod"></output></div>
+  <div class="foot">
+    <button id="reset" type="button"></button>
+    <span id="saved" role="status"></span>
+  </div>
+  <div class="about">
+    <span id="madeBy"></span>
+    <span class="sep">·</span>
+    <a id="source" href="https://github.com/Optimey-CommV/vies-status" target="_blank" rel="noopener"></a>
+    <span class="sep">·</span>
+    <span id="version"></span>
+  </div>
+  <script src="i18n.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

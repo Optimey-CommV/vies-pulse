@@ -1,0 +1,8 @@
+{
+  "ext_name": {
+    "message": "Stav VIES"
+  },
+  "ext_desc": {
+    "message": "Ukazuje, či je možné overovať IČ DPH v systéme VIES, a overuje IČ DPH z celej EÚ."
+  }
+}

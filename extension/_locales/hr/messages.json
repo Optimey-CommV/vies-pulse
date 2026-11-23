@@ -1,0 +1,8 @@
+{
+  "ext_name": {
+    "message": "Stanje sustava VIES"
+  },
+  "ext_desc": {
+    "message": "Prikazuje mogu li se PDV ID brojevi provjeriti putem sustava VIES i provjerava PDV ID brojeve iz cijele EU."
+  }
+}

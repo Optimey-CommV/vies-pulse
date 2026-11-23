@@ -1,15 +1,20 @@
 {
   "manifest_version": 3,
-  "name": "VIES België status",
-  "version": "1.1.0",
-  "description": "Toont of het Belgische luik van VIES (btw-nummercontrole) online is.",
+  "name": "__MSG_ext_name__",
+  "version": "1.2.0",
+  "description": "__MSG_ext_desc__",
+  "default_locale": "en",
   "permissions": ["alarms", "notifications", "storage"],
-  "host_permissions": ["https://ec.europa.eu/*"],
+  "host_permissions": ["https://ec.europa.eu/taxation_customs/vies/*"],
   "background": {
     "service_worker": "background.js"
   },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
   "action": {
-    "default_title": "VIES België",
+    "default_title": "VIES",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",

@@ -1,0 +1,8 @@
+{
+  "ext_name": {
+    "message": "VIES-status"
+  },
+  "ext_desc": {
+    "message": "Visar om momsregistreringsnummer kan valideras via VIES och kontrollerar momsregistreringsnummer från hela EU."
+  }
+}

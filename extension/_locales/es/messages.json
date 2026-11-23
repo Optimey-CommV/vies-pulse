@@ -1,0 +1,8 @@
+{
+  "ext_name": {
+    "message": "Estado de VIES"
+  },
+  "ext_desc": {
+    "message": "Indica si los números de IVA se pueden validar a través de VIES y comprueba números de IVA de toda la UE."
+  }
+}

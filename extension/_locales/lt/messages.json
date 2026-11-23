@@ -1,0 +1,8 @@
+{
+  "ext_name": {
+    "message": "VIES būsena"
+  },
+  "ext_desc": {
+    "message": "Rodo, ar PVM mokėtojų kodus galima patikrinti per VIES, ir tikrina PVM mokėtojų kodus iš visos ES."
+  }
+}

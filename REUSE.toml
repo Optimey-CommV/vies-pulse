@@ -6,11 +6,13 @@ SPDX-PackageName = "vies-status"
 SPDX-PackageSupplier = "Optimey CommV"
 SPDX-PackageDownloadLocation = "https://github.com/Optimey-CommV/vies-status"
 
-# Files that cannot carry a header of their own: the extension manifest (JSON),
+# Files that cannot carry a header of their own: the extension manifest and translations (JSON),
 # the icons, the screenshot and the ready-made builds in release/ (stored with Git LFS).
 [[annotations]]
 path = [
     "extension/manifest.json",
+    "extension/lang/**",
+    "extension/_locales/**",
     "extension/icons/**",
     "windows/app.ico",
     "docs/**",
