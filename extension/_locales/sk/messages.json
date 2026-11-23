@@ -1,6 +1,6 @@
 {
   "ext_name": {
-    "message": "Stav VIES"
+    "message": "VIES Pulse: overenie IČ DPH v EÚ"
   },
   "ext_desc": {
     "message": "Ukazuje, či je možné overovať IČ DPH v systéme VIES, a overuje IČ DPH z celej EÚ."

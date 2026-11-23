@@ -1,6 +1,6 @@
 {
   "ext_name": {
-    "message": "VIES Status"
+    "message": "VIES Pulse: EU VAT check"
   },
   "ext_desc": {
     "message": "Shows whether VAT numbers can be validated via VIES and checks VAT numbers from across the EU."

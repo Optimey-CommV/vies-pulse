@@ -1,6 +1,6 @@
 {
   "ext_name": {
-    "message": "Statut VIES"
+    "message": "VIES Pulse : vérification TVA UE"
   },
   "ext_desc": {
     "message": "Indique si les numéros de TVA peuvent être validés via VIES et vérifie les numéros de TVA de toute l’UE."

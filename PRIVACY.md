@@ -3,11 +3,11 @@ SPDX-FileCopyrightText: 2026 Optimey CommV
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-# Privacy policy: VIES Status
+# Privacy policy: VIES Pulse
 
 Last updated: 23/11/2026
 
-This policy covers the Chrome extension "VIES Status" and the Windows tray tool in this repository, published by Optimey CommV, Molenpark 21, 9800 Deinze, Belgium (VAT BE 1040.311.241), contact joost@optimey.be.
+This policy covers the Chrome extension "VIES Pulse" and the Windows tray tool in this repository, published by Optimey CommV, Molenpark 21, 9800 Deinze, Belgium (VAT BE 1040.311.241), contact joost@optimey.be.
 
 ## What the extension does with data
 

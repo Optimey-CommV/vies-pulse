@@ -3,11 +3,13 @@ SPDX-FileCopyrightText: 2026 Optimey CommV
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-# vies-status
+# VIES Pulse
 
 Shows at a glance whether VIES, the EU system that webshops use to validate VAT numbers, is available for your member state, and lets you check any EU VAT number. Comes as a Chrome extension for all EU member states and as a small Windows tray tool for Belgium.
 
 ![The extension popup](docs/popup.png)
+
+VIES Pulse is an independent project and is not affiliated with or endorsed by the European Commission.
 
 ## Why
 
@@ -56,7 +58,7 @@ git clone https://github.com/Optimey-CommV/vies-status.git
 
 1. Open `chrome://extensions` and switch on **Developer mode**.
 2. Click **Load unpacked** and select the `extension` folder.
-3. Pin **VIES Status** from the puzzle icon in the toolbar.
+3. Pin **VIES Pulse** from the puzzle icon in the toolbar.
 
 Chrome loads the extension from that folder, so keep it where it is. To update: `git pull`, then click the reload arrow on the extension card.
 

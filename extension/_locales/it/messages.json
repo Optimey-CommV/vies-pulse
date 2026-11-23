@@ -1,6 +1,6 @@
 {
   "ext_name": {
-    "message": "Stato VIES"
+    "message": "VIES Pulse: verifica partita IVA UE"
   },
   "ext_desc": {
     "message": "Indica se i numeri di partita IVA possono essere convalidati tramite VIES e verifica le partite IVA di tutta l’UE."

@@ -1,6 +1,6 @@
 {
   "ext_name": {
-    "message": "VIES-állapot"
+    "message": "VIES Pulse: uniós adószám-ellenőrzés"
   },
   "ext_desc": {
     "message": "Megmutatja, hogy a közösségi adószámok ellenőrizhetők-e a VIES-ben, és bármely uniós tagállam adószámát ellenőrzi."

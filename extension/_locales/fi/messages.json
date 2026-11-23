@@ -1,6 +1,6 @@
 {
   "ext_name": {
-    "message": "VIES-tila"
+    "message": "VIES Pulse: EU:n ALV-tarkistus"
   },
   "ext_desc": {
     "message": "Näyttää, voiko ALV-tunnisteita tarkistaa VIES-palvelussa, ja tarkistaa ALV-tunnisteita koko EU:n alueelta."

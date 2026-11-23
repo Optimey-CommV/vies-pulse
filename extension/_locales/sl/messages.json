@@ -1,6 +1,6 @@
 {
   "ext_name": {
-    "message": "Stanje sistema VIES"
+    "message": "VIES Pulse: preverjanje DDV v EU"
   },
   "ext_desc": {
     "message": "Prikazuje, ali je identifikacijske številke za DDV mogoče preveriti prek sistema VIES, in preverja številke za DDV iz vse EU."

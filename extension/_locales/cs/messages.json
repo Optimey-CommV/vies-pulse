@@ -1,6 +1,6 @@
 {
   "ext_name": {
-    "message": "Stav VIES"
+    "message": "VIES Pulse: ověření DIČ v EU"
   },
   "ext_desc": {
     "message": "Ukazuje, zda lze ověřovat DIČ v systému VIES, a ověřuje DIČ z celé EU."

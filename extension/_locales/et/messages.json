@@ -1,6 +1,6 @@
 {
   "ext_name": {
-    "message": "VIES-i olek"
+    "message": "VIES Pulse: ELi KMKR kontroll"
   },
   "ext_desc": {
     "message": "Näitab, kas KMKR-numbreid saab VIES-i kaudu kontrollida, ning kontrollib KMKR-numbreid kogu ELis."

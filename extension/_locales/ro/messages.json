@@ -1,6 +1,6 @@
 {
   "ext_name": {
-    "message": "Stare VIES"
+    "message": "VIES Pulse: verificare TVA UE"
   },
   "ext_desc": {
     "message": "Arată dacă codurile de TVA pot fi validate prin VIES și verifică coduri de TVA din întreaga UE."

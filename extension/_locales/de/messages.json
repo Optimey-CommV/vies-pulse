@@ -1,6 +1,6 @@
 {
   "ext_name": {
-    "message": "VIES-Status"
+    "message": "VIES Pulse: USt-IdNr.-Prüfung EU"
   },
   "ext_desc": {
     "message": "Zeigt an, ob USt-IdNrn. über VIES geprüft werden können, und prüft USt-IdNrn. aus der gesamten EU."

@@ -1,6 +1,6 @@
 {
   "ext_name": {
-    "message": "VIES-status"
+    "message": "VIES Pulse: momskontrol EU"
   },
   "ext_desc": {
     "message": "Viser, om momsnumre kan valideres via VIES, og kontrollerer momsnumre fra hele EU."
