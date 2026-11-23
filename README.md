@@ -43,7 +43,7 @@ The status is checked once a minute. In the extension both the toolbar icon and 
 
 | What | Where |
 |---|---|
-| Chrome extension | The Chrome Web Store (link follows once the listing is approved), or load the `extension` folder yourself as described below. |
+| Chrome extension | [VIES Pulse in the Chrome Web Store](https://chromewebstore.google.com/detail/hnpfieigbdkdmddlpidgpfeijbhdondf). Installed from the store, Chrome keeps it up to date and syncs it to every computer where you are signed in. You can also load the `extension` folder yourself as described below. |
 | Windows tray tool | [`release/VIES-Belgie.exe`](release/) |
 
 The Windows build is stored with Git LFS on the Optimey LFS server, not on GitHub. Clone with [git-lfs](https://git-lfs.com) installed to get the real file; without it, or through the GitHub web interface, you only get a small pointer file. You can always build it yourself from the sources, as described below.
